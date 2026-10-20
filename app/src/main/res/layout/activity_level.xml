@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ниво на активност"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Отговори на въпросите, за да определиш физическата си активност."
+            android:textSize="16sp"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Средно крачки на ден"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/stepsInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Напр. 6500"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Тренировки седмично"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/workoutsInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Напр. 3"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Продължителност на една тренировка (минути)"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/minutesInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Напр. 45"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/calculateActivityButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Изчисли активността" />
+
+        <TextView
+            android:id="@+id/activityResultText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Твоето ниво на активност ще се появи тук."
+            android:textSize="18sp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp" />
+
+        <Button
+            android:id="@+id/useActivityButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Използвай в калкулатора" />
+
+    </LinearLayout>
+</ScrollView>

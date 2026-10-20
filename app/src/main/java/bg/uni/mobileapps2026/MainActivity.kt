@@ -1,11 +1,13 @@
 package bg.uni.mobileapps2026
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,42 +15,94 @@ import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
 
+    private val activityLevelLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == RESULT_OK) {
+                val position = result.data?.getIntExtra(
+                    "activityPosition", -1
+                ) ?: -1
+
+                if (position in 0..4) {
+                    findViewById<Spinner>(
+                        R.id.activitySpinner
+                    ).setSelection(position)
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(R.id.main)
+        ) { v, insets ->
+
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
             )
+
             v.setPadding(
                 systemBars.left,
                 systemBars.top,
                 systemBars.right,
                 systemBars.bottom
             )
+
             insets
         }
 
-        val genderSpinner = findViewById<Spinner>(R.id.genderSpinner)
-        val ageInput = findViewById<EditText>(R.id.ageInput)
-        val heightInput = findViewById<EditText>(R.id.heightInput)
-        val weightInput = findViewById<EditText>(R.id.weightInput)
-        val activitySpinner = findViewById<Spinner>(R.id.activitySpinner)
-        val goalSpinner = findViewById<Spinner>(R.id.goalSpinner)
-        val calculateButton = findViewById<Button>(R.id.calculateButton)
-        val resultTextView = findViewById<TextView>(R.id.resultTextView)
+        val genderSpinner =
+            findViewById<Spinner>(R.id.genderSpinner)
+
+        val ageInput =
+            findViewById<EditText>(R.id.ageInput)
+
+        val heightInput =
+            findViewById<EditText>(R.id.heightInput)
+
+        val weightInput =
+            findViewById<EditText>(R.id.weightInput)
+
+        val activitySpinner =
+            findViewById<Spinner>(R.id.activitySpinner)
+
+        val goalSpinner =
+            findViewById<Spinner>(R.id.goalSpinner)
+
+        val calculateButton =
+            findViewById<Button>(R.id.calculateButton)
+
+        val resultTextView =
+            findViewById<TextView>(R.id.resultTextView)
+
+        val activityLevelButton =
+            findViewById<Button>(R.id.activityLevelButton)
+
+        activityLevelButton.setOnClickListener {
+            val intent = Intent(
+                this,
+                ActivityLevelActivity::class.java
+            )
+
+            activityLevelLauncher.launch(intent)
+        }
 
         calculateButton.setOnClickListener {
 
             val age = ageInput.text.toString().toIntOrNull()
 
             val height = heightInput.text.toString()
-                .replace(",", ".").toDoubleOrNull()
+                .replace(",", ".")
+                .toDoubleOrNull()
 
             val weight = weightInput.text.toString()
-                .replace(",", ".").toDoubleOrNull()
+                .replace(",", ".")
+                .toDoubleOrNull()
 
             if (age == null || height == null || weight == null) {
 
@@ -74,15 +128,14 @@ class MainActivity : AppCompatActivity() {
                     bmr = 10 * weight + 6.25 * height - 5 * age + 5
                 }
 
-                val activityLevel = activitySpinner.selectedItemPosition
-
-                val activityMultiplier = when (activityLevel) {
-                    0 -> 1.2
-                    1 -> 1.375
-                    2 -> 1.55
-                    3 -> 1.725
-                    else -> 1.9
-                }
+                val activityMultiplier =
+                    when (activitySpinner.selectedItemPosition) {
+                        0 -> 1.2
+                        1 -> 1.375
+                        2 -> 1.55
+                        3 -> 1.725
+                        else -> 1.9
+                    }
 
                 val maintenanceCalories = bmr * activityMultiplier
 

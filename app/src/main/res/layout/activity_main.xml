@@ -119,6 +119,13 @@
             android:layout_height="wrap_content"
             android:text="Изчисли калориите" />
 
+        <Button
+            android:id="@+id/activityLevelButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Определи активността си"
+            android:layout_marginBottom="12dp" />
+
         <TextView
             android:id="@+id/resultTextView"
             android:layout_width="match_parent"
