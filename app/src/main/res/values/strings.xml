@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">MobileApps2026</string>
+    <string-array name="gender_options">
+        <item>Жена</item>
+        <item>Мъж</item>
+    </string-array>
+
+    <string-array name="activity_options">
+        <item>Заседнал начин на живот</item>
+        <item>Лека активност</item>
+        <item>Умерена активност</item>
+        <item>Висока активност</item>
+        <item>Много висока активност</item>
+    </string-array>
+
+    <string-array name="goal_options">
+        <item>Сваляне на тегло</item>
+        <item>Поддържане на тегло</item>
+        <item>Качване на тегло</item>
+    </string-array>
 </resources>
