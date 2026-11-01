@@ -6,11 +6,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -56,53 +59,38 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val genderSpinner =
-            findViewById<Spinner>(R.id.genderSpinner)
+        // Връзка с базата данни
+        val database = AppDatabase.getDatabase(this)
+        val repository = CalculationRepository(database.calculationDao())
 
-        val ageInput =
-            findViewById<EditText>(R.id.ageInput)
+        val genderSpinner = findViewById<Spinner>(R.id.genderSpinner)
+        val ageInput = findViewById<EditText>(R.id.ageInput)
+        val heightInput = findViewById<EditText>(R.id.heightInput)
+        val weightInput = findViewById<EditText>(R.id.weightInput)
+        val activitySpinner = findViewById<Spinner>(R.id.activitySpinner)
+        val goalSpinner = findViewById<Spinner>(R.id.goalSpinner)
 
-        val heightInput =
-            findViewById<EditText>(R.id.heightInput)
+        val calculateButton = findViewById<Button>(R.id.calculateButton)
+        val resultTextView = findViewById<TextView>(R.id.resultTextView)
+        val activityLevelButton = findViewById<Button>(R.id.activityLevelButton)
 
-        val weightInput =
-            findViewById<EditText>(R.id.weightInput)
-
-        val activitySpinner =
-            findViewById<Spinner>(R.id.activitySpinner)
-
-        val goalSpinner =
-            findViewById<Spinner>(R.id.goalSpinner)
-
-        val calculateButton =
-            findViewById<Button>(R.id.calculateButton)
-
-        val resultTextView =
-            findViewById<TextView>(R.id.resultTextView)
-
-        val activityLevelButton =
-            findViewById<Button>(R.id.activityLevelButton)
-
+        // Отваряне на екрана за активност
         activityLevelButton.setOnClickListener {
-            val intent = Intent(
-                this,
-                ActivityLevelActivity::class.java
-            )
 
+            val intent = Intent(this, ActivityLevelActivity::class.java)
             activityLevelLauncher.launch(intent)
         }
 
+        // Изчисляване на калориите
         calculateButton.setOnClickListener {
 
             val age = ageInput.text.toString().toIntOrNull()
 
             val height = heightInput.text.toString()
-                .replace(",", ".")
-                .toDoubleOrNull()
+                .replace(",", ".").toDoubleOrNull()
 
             val weight = weightInput.text.toString()
-                .replace(",", ".")
-                .toDoubleOrNull()
+                .replace(",", ".").toDoubleOrNull()
 
             if (age == null || height == null || weight == null) {
 
@@ -156,6 +144,38 @@ class MainActivity : AppCompatActivity() {
                             "Твоята цел (${goalSpinner.selectedItem}): " +
                             "${targetCalories.roundToInt()} kcal на ден\n\n" +
                             "Резултатите са ориентировъчни."
+
+                // Запазване в базата данни
+                val calculation = Calculation(
+                    gender = genderSpinner.selectedItem.toString(),
+                    age = age,
+                    height = height,
+                    weight = weight,
+                    activityLevel = activitySpinner.selectedItem.toString(),
+                    goal = goalSpinner.selectedItem.toString(),
+                    bmr = bmr.roundToInt(),
+                    maintenanceCalories = maintenanceCalories.roundToInt(),
+                    targetCalories = targetCalories.roundToInt()
+                )
+
+                lifecycleScope.launch {
+                    try {
+                        repository.addCalculation(calculation)
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Изчислението е запазено!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Възникна грешка при запазването.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
     }
