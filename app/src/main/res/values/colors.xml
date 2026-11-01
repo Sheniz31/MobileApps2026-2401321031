@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- Light theme -->
+    <color name="light_background">#F5F9FD</color>
+    <color name="light_surface">#FFFFFF</color>
+    <color name="light_accent">#90CAF9</color>
+    <color name="light_text">#17212B</color>
+
+    <!-- Dark theme -->
+    <color name="dark_background">#101010</color>
+    <color name="dark_surface">#1A1A1A</color>
+    <color name="dark_accent">#A9863E</color>
+    <color name="dark_text">#F0EBDD</color>
+
 </resources>
