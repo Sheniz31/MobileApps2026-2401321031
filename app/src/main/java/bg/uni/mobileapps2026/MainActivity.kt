@@ -12,8 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import androidx.lifecycle.ViewModelProvider
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -59,8 +58,15 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Създаваме ViewModel
         val database = AppDatabase.getDatabase(this)
         val repository = CalculationRepository(database.calculationDao())
+
+        val factory = CalculationViewModelFactory(repository)
+
+        val viewModel = ViewModelProvider(
+            this, factory
+        )[CalculationViewModel::class.java]
 
         val genderSpinner = findViewById<Spinner>(R.id.genderSpinner)
         val ageInput = findViewById<EditText>(R.id.ageInput)
@@ -71,15 +77,20 @@ class MainActivity : AppCompatActivity() {
 
         val calculateButton = findViewById<Button>(R.id.calculateButton)
         val resultTextView = findViewById<TextView>(R.id.resultTextView)
-        val activityLevelButton = findViewById<Button>(R.id.activityLevelButton)
-        val historyButton = findViewById<Button>(R.id.historyButton)
+        val activityLevelButton =
+            findViewById<Button>(R.id.activityLevelButton)
+
+        val historyButton =
+            findViewById<Button>(R.id.historyButton)
 
         activityLevelButton.setOnClickListener {
 
             val intent = Intent(this, ActivityLevelActivity::class.java)
             activityLevelLauncher.launch(intent)
         }
+
         historyButton.setOnClickListener {
+
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
@@ -159,19 +170,18 @@ class MainActivity : AppCompatActivity() {
                     targetCalories = targetCalories.roundToInt()
                 )
 
-                lifecycleScope.launch {
-                    try {
-                        repository.addCalculation(calculation)
+                // Запазваме чрез ViewModel
+                viewModel.addCalculation(calculation) { success ->
 
+                    if (success) {
                         Toast.makeText(
-                            this@MainActivity,
+                            this,
                             "Изчислението е запазено!",
                             Toast.LENGTH_SHORT
                         ).show()
-
-                    } catch (e: Exception) {
+                    } else {
                         Toast.makeText(
-                            this@MainActivity,
+                            this,
                             "Възникна грешка при запазването.",
                             Toast.LENGTH_SHORT
                         ).show()

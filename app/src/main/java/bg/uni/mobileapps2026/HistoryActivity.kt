@@ -8,9 +8,10 @@ import android.widget.Toast
 import android.text.InputType
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -26,31 +27,45 @@ class HistoryActivity : AppCompatActivity() {
         val emptyText =
             findViewById<TextView>(R.id.emptyText)
 
+        // Свързваме ViewModel с базата данни
         val database = AppDatabase.getDatabase(this)
         val repository = CalculationRepository(database.calculationDao())
+        val factory = CalculationViewModelFactory(repository)
 
+        val viewModel = ViewModelProvider(
+            this, factory
+        )[CalculationViewModel::class.java]
+
+        // Създаваме списъка с изчисления
         val adapter = CalculationAdapter(
 
             onEditClick = { calculation ->
-                editCalculation(calculation, repository)
+                editCalculation(calculation, viewModel)
             },
 
             onDeleteClick = { calculation ->
 
                 AlertDialog.Builder(this)
                     .setTitle("Изтриване")
-                    .setMessage("Сигурен ли си, че искаш да изтриеш това изчисление?")
+                    .setMessage("Искаш ли да изтриеш това изчисление?")
                     .setNegativeButton("Отказ", null)
                     .setPositiveButton("Изтрий") { _, _ ->
 
-                        lifecycleScope.launch {
-                            repository.deleteCalculation(calculation)
+                        viewModel.deleteCalculation(calculation) { success ->
 
-                            Toast.makeText(
-                                this@HistoryActivity,
-                                "Изчислението е изтрито.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if (success) {
+                                Toast.makeText(
+                                    this,
+                                    "Изчислението е изтрито.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    this,
+                                    "Възникна грешка.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                     .show()
@@ -60,8 +75,9 @@ class HistoryActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        // Зареждаме запазените изчисления
         lifecycleScope.launch {
-            repository.allCalculations.collect { calculations ->
+            viewModel.allCalculations.collect { calculations ->
 
                 adapter.setData(calculations)
 
@@ -76,7 +92,7 @@ class HistoryActivity : AppCompatActivity() {
 
     private fun editCalculation(
         calculation: Calculation,
-        repository: CalculationRepository
+        viewModel: CalculationViewModel
     ) {
 
         val weightInput = EditText(this)
@@ -86,11 +102,10 @@ class HistoryActivity : AppCompatActivity() {
                     InputType.TYPE_NUMBER_FLAG_DECIMAL
 
         weightInput.setText(calculation.weight.toString())
-        weightInput.hint = "Ново тегло в кг"
 
         AlertDialog.Builder(this)
             .setTitle("Промени теглото")
-            .setMessage("Въведи новото си тегло.")
+            .setMessage("Въведи новото си тегло в кг.")
             .setView(weightInput)
             .setNegativeButton("Отказ", null)
             .setPositiveButton("Запази") { _, _ ->
@@ -121,7 +136,7 @@ class HistoryActivity : AppCompatActivity() {
                                 5 * calculation.age + 5
                     }
 
-                    val activityMultiplier =
+                    val multiplier =
                         when (calculation.activityLevel) {
                             "Заседнал начин на живот" -> 1.2
                             "Лека активност" -> 1.375
@@ -130,7 +145,7 @@ class HistoryActivity : AppCompatActivity() {
                             else -> 1.9
                         }
 
-                    val maintenance = bmr * activityMultiplier
+                    val maintenance = bmr * multiplier
 
                     val target: Double
 
@@ -146,16 +161,20 @@ class HistoryActivity : AppCompatActivity() {
                         weight = newWeight,
                         bmr = bmr.roundToInt(),
                         maintenanceCalories = maintenance.roundToInt(),
-                        targetCalories = target.roundToInt(),
-                        date = System.currentTimeMillis()
+                        targetCalories = target.roundToInt()
                     )
 
-                    lifecycleScope.launch {
-                        repository.updateCalculation(updatedCalculation)
+                    viewModel.updateCalculation(updatedCalculation) { success ->
+
+                        val message = if (success) {
+                            "Изчислението е променено."
+                        } else {
+                            "Възникна грешка."
+                        }
 
                         Toast.makeText(
-                            this@HistoryActivity,
-                            "Изчислението е променено.",
+                            this,
+                            message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
