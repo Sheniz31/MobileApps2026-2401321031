@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // Връзка с базата данни
         val database = AppDatabase.getDatabase(this)
         val repository = CalculationRepository(database.calculationDao())
 
@@ -73,15 +72,18 @@ class MainActivity : AppCompatActivity() {
         val calculateButton = findViewById<Button>(R.id.calculateButton)
         val resultTextView = findViewById<TextView>(R.id.resultTextView)
         val activityLevelButton = findViewById<Button>(R.id.activityLevelButton)
+        val historyButton = findViewById<Button>(R.id.historyButton)
 
-        // Отваряне на екрана за активност
         activityLevelButton.setOnClickListener {
 
             val intent = Intent(this, ActivityLevelActivity::class.java)
             activityLevelLauncher.launch(intent)
         }
+        historyButton.setOnClickListener {
+            val intent = Intent(this, HistoryActivity::class.java)
+            startActivity(intent)
+        }
 
-        // Изчисляване на калориите
         calculateButton.setOnClickListener {
 
             val age = ageInput.text.toString().toIntOrNull()
@@ -145,7 +147,6 @@ class MainActivity : AppCompatActivity() {
                             "${targetCalories.roundToInt()} kcal на ден\n\n" +
                             "Резултатите са ориентировъчни."
 
-                // Запазване в базата данни
                 val calculation = Calculation(
                     gender = genderSpinner.selectedItem.toString(),
                     age = age,

@@ -95,7 +95,7 @@ class ActivityLevelActivity : AppCompatActivity() {
                     activityName = "Лека активност"
                 } else if (points <= 5) {
                     selectedActivityPosition = 2
-                    activityName = "Средна активност"
+                    activityName = "Умерена активност"
                 } else if (points <= 7) {
                     selectedActivityPosition = 3
                     activityName = "Висока активност"

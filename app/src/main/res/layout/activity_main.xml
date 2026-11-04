@@ -126,6 +126,13 @@
             android:text="Определи активността си"
             android:layout_marginBottom="12dp" />
 
+        <Button
+            android:id="@+id/historyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="История на изчисленията"
+            android:layout_marginBottom="12dp" />
+
         <TextView
             android:id="@+id/resultTextView"
             android:layout_width="match_parent"
