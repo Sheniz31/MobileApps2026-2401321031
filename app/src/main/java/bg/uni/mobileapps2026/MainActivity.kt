@@ -94,6 +94,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
+        val foodSearchButton = findViewById<Button>(R.id.foodSearchButton)
+
+        foodSearchButton.setOnClickListener {
+            startActivity(Intent(this, FoodSearchActivity::class.java))
+        }
 
         calculateButton.setOnClickListener {
 
