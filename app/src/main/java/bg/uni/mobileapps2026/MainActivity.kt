@@ -1,3 +1,4 @@
+
 package bg.uni.mobileapps2026
 
 import android.content.Intent
@@ -77,24 +78,25 @@ class MainActivity : AppCompatActivity() {
 
         val calculateButton = findViewById<Button>(R.id.calculateButton)
         val resultTextView = findViewById<TextView>(R.id.resultTextView)
+
         val activityLevelButton =
             findViewById<Button>(R.id.activityLevelButton)
 
         val historyButton =
             findViewById<Button>(R.id.historyButton)
 
-        activityLevelButton.setOnClickListener {
+        val foodSearchButton =
+            findViewById<Button>(R.id.foodSearchButton)
 
+        activityLevelButton.setOnClickListener {
             val intent = Intent(this, ActivityLevelActivity::class.java)
             activityLevelLauncher.launch(intent)
         }
 
         historyButton.setOnClickListener {
-
             val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
-        val foodSearchButton = findViewById<Button>(R.id.foodSearchButton)
 
         foodSearchButton.setOnClickListener {
             startActivity(Intent(this, FoodSearchActivity::class.java))
@@ -126,34 +128,25 @@ class MainActivity : AppCompatActivity() {
 
             } else {
 
-                val bmr: Double
+                // Изчисляваме калориите чрез CalorieCalculator
+                val bmr = CalorieCalculator.calculateBmr(
+                    weight,
+                    height,
+                    age,
+                    genderSpinner.selectedItemPosition == 0
+                )
 
-                if (genderSpinner.selectedItemPosition == 0) {
-                    bmr = 10 * weight + 6.25 * height - 5 * age - 161
-                } else {
-                    bmr = 10 * weight + 6.25 * height - 5 * age + 5
-                }
+                val maintenanceCalories =
+                    CalorieCalculator.calculateMaintenanceCalories(
+                        bmr,
+                        activitySpinner.selectedItemPosition
+                    )
 
-                val activityMultiplier =
-                    when (activitySpinner.selectedItemPosition) {
-                        0 -> 1.2
-                        1 -> 1.375
-                        2 -> 1.55
-                        3 -> 1.725
-                        else -> 1.9
-                    }
-
-                val maintenanceCalories = bmr * activityMultiplier
-
-                val targetCalories: Double
-
-                if (goalSpinner.selectedItemPosition == 0) {
-                    targetCalories = maintenanceCalories * 0.85
-                } else if (goalSpinner.selectedItemPosition == 2) {
-                    targetCalories = maintenanceCalories * 1.10
-                } else {
-                    targetCalories = maintenanceCalories
-                }
+                val targetCalories =
+                    CalorieCalculator.calculateTargetCalories(
+                        maintenanceCalories,
+                        goalSpinner.selectedItemPosition
+                    )
 
                 resultTextView.text =
                     "Разход в покой: ${bmr.roundToInt()} kcal\n\n" +
