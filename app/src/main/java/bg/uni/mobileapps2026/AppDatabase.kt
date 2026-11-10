@@ -8,33 +8,31 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [Calculation::class],
     version = 1,
-    exportSchema = false
+    exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun calculationDao(): CalculationDao
 
     companion object {
-
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private var instance: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
-
-            if (INSTANCE == null) {
+            if (instance == null) {
                 synchronized(this) {
-                    if (INSTANCE == null) {
-
-                        INSTANCE = Room.databaseBuilder(
-                            context.applicationContext,
-                            AppDatabase::class.java,
-                            "calorie_database"
-                        ).build()
+                    if (instance == null) {
+                        instance =
+                            Room
+                                .databaseBuilder(
+                                    context.applicationContext,
+                                    AppDatabase::class.java,
+                                    "calorie_database",
+                                ).build()
                     }
                 }
             }
 
-            return INSTANCE!!
+            return instance!!
         }
     }
 }

@@ -1,0 +1,16 @@
+Точкова поправка за останалите 12 Detekt нарушения
+
+1. Затвори Android Studio или остави проекта отворен, но не стартирай компилация по време на копирането.
+2. Разархивирай съдържанието на този ZIP директно в основната папка:
+   C:\Users\bgmas\StudioProjects\MobileApps2026-2401321031
+3. Потвърди замяната на съществуващите файлове.
+4. Новият файл FoodSearchService.kt ще бъде добавен в същата Kotlin папка.
+5. В PowerShell от основната папка изпълни:
+   .\gradlew.bat :app:spotlessApply
+   .\gradlew.bat :app:spotlessCheck :app:detekt
+   .\gradlew.bat :app:testDebugUnitTest --rerun-tasks
+
+Този архив съдържа само четири Kotlin файла (три заменени и един нов).
+Той не съдържа APK, keystore, local.properties или Gradle build папки.
+Формулите и праговете за активност са запазени; numeric values са преместени
+в именувани константи. Android Gradle build трябва да бъде проверен локално.

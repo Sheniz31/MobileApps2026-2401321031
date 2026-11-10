@@ -3,9 +3,8 @@ package bg.uni.mobileapps2026
 import kotlinx.coroutines.flow.Flow
 
 class CalculationRepository(
-    private val calculationDao: CalculationDao
+    private val calculationDao: CalculationDao,
 ) {
-
     val allCalculations: Flow<List<Calculation>> =
         calculationDao.getAllCalculations()
 

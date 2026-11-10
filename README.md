@@ -106,14 +106,34 @@ Espresso
 
 ## 10. Tests
 
-The project has 6 Unit tests for the calorie calculations.
+The project includes 38 local JUnit tests covering:
 
-It also has 1 Espresso test for checking the food search screen.
+- Calorie calculations and activity multipliers.
+- Validation of age, height, weight, steps and workouts.
+- Food-name translation, product matching and portion calorie calculations.
+- Recalculation of saved calculations after a weight change.
+- Repository add, update and delete operations using a test DAO.
 
-All 7 tests passed during development.
+It also includes an Espresso test that opens the food-search screen and verifies its main input.
+
+Run the local unit tests with `gradlew.bat :app:testDebugUnitTest` and the Espresso test with `gradlew.bat :app:connectedDebugAndroidTest`.
 
 ## 11. Author
 
 Mobile Applications course project.
 
 GitHub repository: [MobileApps2026-2401321031](https://github.com/Sheniz31/MobileApps2026-2401321031)
+
+## 12. Code Quality Checks
+
+The project uses Spotless with ktlint for Kotlin formatting and Detekt for static code analysis. LeakCanary is included only in the debug build to help detect retained Android components during manual testing.
+
+Run the checks from the project folder:
+
+```powershell
+.\gradlew.bat :app:spotlessCheck :app:detekt
+.\gradlew.bat :app:testDebugUnitTest
+.\gradlew.bat :app:connectedDebugAndroidTest
+```
+
+Unit-test coverage can be generated with `:app:createDebugUnitTestCoverageReport`. The report is written under `app/build/reports/coverage/test/debug/`.

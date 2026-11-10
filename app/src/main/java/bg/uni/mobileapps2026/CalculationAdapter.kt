@@ -12,9 +12,8 @@ import java.util.Locale
 
 class CalculationAdapter(
     private val onEditClick: (Calculation) -> Unit,
-    private val onDeleteClick: (Calculation) -> Unit
+    private val onDeleteClick: (Calculation) -> Unit,
 ) : RecyclerView.Adapter<CalculationAdapter.CalculationViewHolder>() {
-
     private var calculations = listOf<Calculation>()
 
     fun setData(newCalculations: List<Calculation>) {
@@ -22,9 +21,9 @@ class CalculationAdapter(
         notifyDataSetChanged()
     }
 
-    class CalculationViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-
+    class CalculationViewHolder(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView) {
         val dateText: TextView = itemView.findViewById(R.id.dateText)
         val detailsText: TextView = itemView.findViewById(R.id.detailsText)
         val caloriesText: TextView = itemView.findViewById(R.id.caloriesText)
@@ -34,35 +33,36 @@ class CalculationAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): CalculationViewHolder {
-
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_calculation, parent, false)
+        val view =
+            LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_calculation, parent, false)
 
         return CalculationViewHolder(view)
     }
 
     override fun onBindViewHolder(
         holder: CalculationViewHolder,
-        position: Int
+        position: Int,
     ) {
-
         val calculation = calculations[position]
 
-        val dateFormat = SimpleDateFormat(
-            "dd.MM.yyyy HH:mm",
-            Locale.getDefault()
-        )
+        val dateFormat =
+            SimpleDateFormat(
+                "dd.MM.yyyy HH:mm",
+                Locale.getDefault(),
+            )
 
         holder.dateText.text =
             dateFormat.format(Date(calculation.date))
 
         holder.detailsText.text =
             "${calculation.gender}, ${calculation.age} г.\n" +
-                    "${calculation.height} см, ${calculation.weight} кг\n" +
-                    "Активност: ${calculation.activityLevel}\n" +
-                    "Цел: ${calculation.goal}"
+            "${calculation.height} см, ${calculation.weight} кг\n" +
+            "Активност: ${calculation.activityLevel}\n" +
+            "Цел: ${calculation.goal}"
 
         holder.caloriesText.text =
             "${calculation.targetCalories} kcal на ден"
@@ -76,7 +76,5 @@ class CalculationAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return calculations.size
-    }
+    override fun getItemCount(): Int = calculations.size
 }

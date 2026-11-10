@@ -13,12 +13,9 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
-
     @Test
     fun foodSearchScreenOpensSuccessfully() {
-
         ActivityScenario.launch(MainActivity::class.java).use {
-
             onView(withId(R.id.foodSearchButton))
                 .check(matches(isDisplayed()))
 
